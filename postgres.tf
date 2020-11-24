@@ -92,3 +92,16 @@ resource "google_compute_firewall" "postgres-database" {
   target_tags = ["postgres"]
   source_ranges = [ "10.157.20.0/24" ]
 }
+
+resource "google_compute_firewall" "postgres-patroni-rest" {
+  name    = "postgres-patroni-rest"
+  network = google_compute_network.network-for-postgres.id
+  
+  allow {
+    protocol = "tcp"
+    ports    = ["8008"]
+  }
+
+  target_tags = ["postgres"]
+  source_ranges = [ "10.157.20.0/24" ]
+}

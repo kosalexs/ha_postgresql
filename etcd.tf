@@ -3,6 +3,12 @@ provider "google" {
   region      = "europe-west3"
 }
 
+resource "google_compute_network" "network-for-postgres" {
+  name          = "network-for-postgres"
+  project 		= "otus-292713"
+  auto_create_subnetworks = false
+}
+
 resource "google_compute_subnetwork" "subnetwork-for-proxy" {
   provider = google-beta
 
@@ -23,12 +29,6 @@ resource "google_compute_subnetwork" "subnetwork-for-database" {
   ip_cidr_range = "10.157.20.0/24"
   region        = "europe-west3"
   network       = "network-for-postgres"
-}
-
-resource "google_compute_network" "network-for-postgres" {
-  name          = "network-for-postgres"
-  project 		= "otus-292713"
-  auto_create_subnetworks = false
 }
 
 

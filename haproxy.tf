@@ -57,3 +57,16 @@ resource "google_compute_firewall" "haproxy-ssh" {
   target_tags = ["haproxy"]
   source_ranges = [ "0.0.0.0/0" ]
 }
+
+resource "google_compute_firewall" "haproxy-postgres" {
+  name    = "haproxy-postgres"
+  network = google_compute_network.network-for-postgres.id
+  
+  allow {
+    protocol = "tcp"
+    ports    = ["5000"]
+  }
+
+  target_tags = ["haproxy"]
+  source_ranges = [ "0.0.0.0/0" ]
+}
