@@ -19,6 +19,8 @@ resource "google_compute_subnetwork" "subnetwork-for-proxy" {
   purpose       = "INTERNAL_HTTPS_LOAD_BALANCER"
   role          = "ACTIVE"
   network       = "network-for-postgres"
+  
+  depends_on = [google_compute_network.network-for-postgres]
 }
 
 resource "google_compute_subnetwork" "subnetwork-for-database" {
@@ -29,6 +31,8 @@ resource "google_compute_subnetwork" "subnetwork-for-database" {
   ip_cidr_range = "10.157.20.0/24"
   region        = "europe-west3"
   network       = "network-for-postgres"
+  
+  depends_on = [google_compute_network.network-for-postgres]
 }
 
 
@@ -63,6 +67,8 @@ resource "google_compute_instance" "etcd-1" {
   }
   
   metadata_startup_script = file("files/etcd1.sh")
+  
+  depends_on = [google_compute_subnetwork.subnetwork-for-database]
  
 }
 
@@ -97,6 +103,8 @@ resource "google_compute_instance" "etcd-2" {
   }
   
   metadata_startup_script = file("files/etcd2.sh")
+  
+  depends_on = [google_compute_subnetwork.subnetwork-for-database]
  
 }
 
@@ -162,6 +170,8 @@ resource "google_compute_forwarding_rule" "etcd-forwarding-rule" {
   subnetwork = google_compute_subnetwork.subnetwork-for-database.id
   ip_address = "10.157.20.20"
   ports = ["80"]
+  
+  depends_on = [google_compute_subnetwork.subnetwork-for-database]
 }
 
 # determine whether instances are responsive and able to do work
@@ -186,6 +196,8 @@ resource "google_compute_firewall" "etcd" {
 
   target_tags = ["etcd"]
   source_ranges = [ "0.0.0.0/0" ]
+  
+  depends_on = [google_compute_subnetwork.subnetwork-for-database]
 }
 
 resource "google_compute_firewall" "etcd-url" {
@@ -199,6 +211,8 @@ resource "google_compute_firewall" "etcd-url" {
 
   target_tags = ["etcd"]
   source_ranges = [ "0.0.0.0/0" ]
+  
+  depends_on = [google_compute_subnetwork.subnetwork-for-database]
 }
 
 resource "google_compute_firewall" "etcd-ssh" {
@@ -212,6 +226,8 @@ resource "google_compute_firewall" "etcd-ssh" {
 
   target_tags = ["etcd"]
   source_ranges = [ "0.0.0.0/0" ]
+  
+  depends_on = [google_compute_subnetwork.subnetwork-for-database]
 }
 
 resource "google_compute_firewall" "etcd-http" {
@@ -225,5 +241,7 @@ resource "google_compute_firewall" "etcd-http" {
 
   target_tags = ["etcd"]
   source_ranges = [ "0.0.0.0/0" ]
+  
+  depends_on = [google_compute_subnetwork.subnetwork-for-database]
 }
 
