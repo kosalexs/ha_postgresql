@@ -1,1 +1,2 @@
-# ha_postgresql
+# postgresql_haproxy
+Postgresql + Patroni + Haproxy + ETCD
